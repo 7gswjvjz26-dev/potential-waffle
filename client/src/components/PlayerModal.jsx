@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell,
+  ComposedChart, Line, Legend
 } from 'recharts';
 import { useApi } from '../hooks/useApi.js';
 import { FLAG_MAP } from './flags.js';
@@ -23,11 +24,14 @@ export default function PlayerModal({ player, onClose }) {
 
   const wins = data?.wins ?? [];
   const rus = data?.runner_ups ?? [];
+  const byAge = data?.byAge ?? [];
 
   const slamWins = wins.filter(t => t.category === 'Grand Slam');
-  const mastersWins = wins.filter(t => t.category === 'Masters 1000');
+  const tourWins = wins.filter(t => t.category !== 'Grand Slam');
   const slamRU = rus.filter(t => t.category === 'Grand Slam');
-  const mastersRU = rus.filter(t => t.category === 'Masters 1000');
+  const tourRU = rus.filter(t => t.category !== 'Grand Slam');
+  const isWTA = wins[0]?.tour === 'WTA' || rus[0]?.tour === 'WTA';
+  const tourLabel = isWTA ? 'WTA 1000/500' : 'Masters 1000';
 
   // By surface wins
   const bySurface = {};
@@ -69,9 +73,9 @@ export default function PlayerModal({ player, onClose }) {
             <div className="grid grid-cols-4 gap-3">
               {[
                 { label: 'GS Titles', value: slamWins.length, color: 'text-yellow-400' },
-                { label: 'M1000 Titles', value: mastersWins.length, color: 'text-emerald-400' },
+                { label: `${tourLabel} Titles`, value: tourWins.length, color: 'text-emerald-400' },
                 { label: 'GS Runner-ups', value: slamRU.length, color: 'text-yellow-300 opacity-70' },
-                { label: 'M1000 Runner-ups', value: mastersRU.length, color: 'text-emerald-300 opacity-70' },
+                { label: `${tourLabel} RU`, value: tourRU.length, color: 'text-emerald-300 opacity-70' },
               ].map(s => (
                 <div key={s.label} className="bg-slate-800 rounded-xl p-3 text-center">
                   <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
@@ -129,11 +133,14 @@ export default function PlayerModal({ player, onClose }) {
                     <div key={t.id} className="flex items-center gap-2 text-sm py-1.5 px-2 rounded-lg hover:bg-slate-800">
                       <span className="text-slate-500 font-mono w-10 flex-shrink-0">{t.year}</span>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full flex-shrink-0 ${
-                        t.category === 'Grand Slam' ? 'bg-yellow-900/50 text-yellow-300' : 'bg-slate-700 text-slate-300'
-                      }`}>{t.category === 'Grand Slam' ? 'GS' : 'M1K'}</span>
+                        t.category === 'Grand Slam' ? 'bg-yellow-900/50 text-yellow-300'
+                        : t.category === 'WTA 1000' ? 'bg-pink-900/50 text-pink-300'
+                        : t.category === 'WTA 500' ? 'bg-purple-900/50 text-purple-300'
+                        : 'bg-slate-700 text-slate-300'
+                      }`}>{t.category === 'Grand Slam' ? 'GS' : t.category === 'Masters 1000' ? 'M1K' : t.category === 'WTA 1000' ? 'W1K' : 'W500'}</span>
                       <span className="font-medium text-white">{t.name}</span>
-                      <span className={`text-xs px-1.5 py-0.5 rounded ml-auto flex-shrink-0`}
-                        style={{ color: SURFACE_COLOR[t.surface]?.split(' ')[1] ?? '#94a3b8' }}>
+                      <span className="text-xs px-1.5 py-0.5 rounded ml-auto flex-shrink-0"
+                        style={{ color: SURFACE_COLOR[t.surface] ?? '#94a3b8' }}>
                         {t.surface}
                       </span>
                       <span className="text-slate-400 text-xs hidden sm:block">def. {t.runner_up}</span>
@@ -152,13 +159,40 @@ export default function PlayerModal({ player, onClose }) {
                     <div key={t.id} className="flex items-center gap-2 text-sm py-1.5 px-2 rounded-lg hover:bg-slate-800">
                       <span className="text-slate-500 font-mono w-10 flex-shrink-0">{t.year}</span>
                       <span className={`text-xs px-1.5 py-0.5 rounded-full flex-shrink-0 ${
-                        t.category === 'Grand Slam' ? 'bg-yellow-900/50 text-yellow-300' : 'bg-slate-700 text-slate-300'
-                      }`}>{t.category === 'Grand Slam' ? 'GS' : 'M1K'}</span>
+                        t.category === 'Grand Slam' ? 'bg-yellow-900/50 text-yellow-300'
+                        : t.category === 'WTA 1000' ? 'bg-pink-900/50 text-pink-300'
+                        : t.category === 'WTA 500' ? 'bg-purple-900/50 text-purple-300'
+                        : 'bg-slate-700 text-slate-300'
+                      }`}>{t.category === 'Grand Slam' ? 'GS' : t.category === 'Masters 1000' ? 'M1K' : t.category === 'WTA 1000' ? 'W1K' : 'W500'}</span>
                       <span className="font-medium text-white">{t.name}</span>
                       <span className="text-slate-400 text-xs ml-auto hidden sm:block">lost to {t.winner}</span>
                     </div>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* Wins & cumulative titles by age */}
+            {byAge.length > 0 && (
+              <div>
+                <h3 className="text-xs font-semibold font-display text-slate-400 uppercase mb-3">Titles by Age</h3>
+                <ResponsiveContainer width="100%" height={220}>
+                  <ComposedChart data={byAge} margin={{ left: -10, right: 20, top: 5, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                    <XAxis dataKey="age" tick={{ fill: '#94a3b8', fontSize: 11 }} label={{ value: 'Age', position: 'insideBottom', offset: -2, fill: '#64748b', fontSize: 10 }} />
+                    <YAxis yAxisId="left" tick={{ fill: '#94a3b8', fontSize: 11 }} allowDecimals={false} />
+                    <YAxis yAxisId="right" orientation="right" tick={{ fill: '#94a3b8', fontSize: 11 }} allowDecimals={false} />
+                    <Tooltip
+                      contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8 }}
+                      labelStyle={{ color: '#e2e8f0', fontWeight: 'bold' }}
+                      labelFormatter={v => `Age ${v}`}
+                      itemStyle={{ color: '#94a3b8' }}
+                    />
+                    <Legend wrapperStyle={{ color: '#94a3b8', fontSize: 12 }} />
+                    <Bar yAxisId="left" dataKey="wins" name="Wins" fill="#10B981" radius={[3,3,0,0]} />
+                    <Line yAxisId="right" type="monotone" dataKey="cumulative" name="Cumulative Titles" stroke="#F59E0B" strokeWidth={2.5} dot={{ r: 3, fill: '#F59E0B' }} />
+                  </ComposedChart>
+                </ResponsiveContainer>
               </div>
             )}
           </div>

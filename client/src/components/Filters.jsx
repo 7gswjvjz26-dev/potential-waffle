@@ -1,9 +1,21 @@
 const SURFACES = ['Hard', 'Clay', 'Grass', 'Hard (i)'];
-const CATEGORIES = ['Grand Slam', 'Masters 1000'];
 
-export default function Filters({ filters, onChange, meta }) {
+export default function Filters({ filters, onChange, meta, tour, categoryOptions }) {
   const years = [];
   for (let y = 2000; y <= 2024; y++) years.push(y);
+
+  const isReset =
+    filters.category || filters.surface || filters.player || filters.tournament ||
+    filters.year_from !== 2000 || filters.year_to !== 2024;
+
+  const resetAll = () => {
+    onChange('category', '');
+    onChange('surface', '');
+    onChange('player', '');
+    onChange('tournament', '');
+    onChange('year_from', 2000);
+    onChange('year_to', 2024);
+  };
 
   return (
     <div className="card">
@@ -11,20 +23,23 @@ export default function Filters({ filters, onChange, meta }) {
         {/* Category */}
         <div className="flex flex-col gap-1">
           <label className="text-xs text-slate-400 font-medium">Category</label>
-          <div className="flex gap-1">
+          <div className="flex gap-1 flex-wrap">
             <button
               onClick={() => onChange('category', '')}
               className={`btn ${!filters.category ? 'btn-active' : 'btn-inactive'}`}
             >
               All
             </button>
-            {CATEGORIES.map(c => (
+            {categoryOptions.map(c => (
               <button
                 key={c}
                 onClick={() => onChange('category', filters.category === c ? '' : c)}
                 className={`btn ${filters.category === c ? 'btn-active' : 'btn-inactive'}`}
               >
-                {c === 'Grand Slam' ? 'Grand Slams' : 'Masters 1000'}
+                {c === 'Grand Slam' ? 'Grand Slams'
+                  : c === 'Masters 1000' ? 'Masters 1000'
+                  : c === 'WTA 1000' ? 'WTA 1000'
+                  : 'WTA 500'}
               </button>
             ))}
           </div>
@@ -109,19 +124,8 @@ export default function Filters({ filters, onChange, meta }) {
           />
         </div>
 
-        {/* Reset */}
-        {(filters.category || filters.surface || filters.player || filters.tournament || filters.year_from !== 2000 || filters.year_to !== 2024) && (
-          <button
-            onClick={() => {
-              onChange('category', '');
-              onChange('surface', '');
-              onChange('player', '');
-              onChange('tournament', '');
-              onChange('year_from', 2000);
-              onChange('year_to', 2024);
-            }}
-            className="btn text-slate-400 hover:text-red-400 self-end"
-          >
+        {isReset && (
+          <button onClick={resetAll} className="btn text-slate-400 hover:text-red-400 self-end">
             ✕ Reset
           </button>
         )}

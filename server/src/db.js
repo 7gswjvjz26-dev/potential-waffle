@@ -27,6 +27,7 @@ export async function initDb() {
       name TEXT NOT NULL,
       category TEXT NOT NULL,
       surface TEXT NOT NULL,
+      tour TEXT NOT NULL DEFAULT 'ATP',
       winner TEXT NOT NULL,
       runner_up TEXT NOT NULL,
       winner_nationality TEXT,
@@ -35,6 +36,7 @@ export async function initDb() {
     );
     CREATE INDEX IF NOT EXISTS idx_year ON tournaments(year);
     CREATE INDEX IF NOT EXISTS idx_category ON tournaments(category);
+    CREATE INDEX IF NOT EXISTS idx_tour ON tournaments(tour);
     CREATE INDEX IF NOT EXISTS idx_winner ON tournaments(winner);
     CREATE INDEX IF NOT EXISTS idx_runner_up ON tournaments(runner_up);
   `);

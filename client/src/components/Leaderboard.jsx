@@ -4,9 +4,12 @@ import { FLAG_MAP } from './flags.js';
 
 const MEDAL = ['🥇', '🥈', '🥉'];
 
-export default function Leaderboard({ filterParams, onSelectPlayer }) {
+export default function Leaderboard({ filterParams, onSelectPlayer, tour }) {
   const [view, setView] = useState('wins');
   const { data, loading } = useApi(`/api/leaderboard?${filterParams}`, [filterParams]);
+
+  // Column label for the non-GS category
+  const tourLabel = tour === 'WTA' ? 'WTA 1000/500' : tour === 'ATP' ? 'Masters 1000' : 'Tour';
 
   if (loading) return <Skeleton />;
   if (!data?.length) return <Empty />;
@@ -44,7 +47,7 @@ export default function Leaderboard({ filterParams, onSelectPlayer }) {
             <div className="mt-2 flex justify-center gap-2 text-xs text-slate-500">
               <span>{p.slam_wins} GS</span>
               <span>·</span>
-              <span>{p.masters_wins} M1000</span>
+              <span>{p.tour_wins} {tour === 'WTA' ? 'WTA' : tour === 'ATP' ? 'M1K' : 'Tour'}</span>
             </div>
           </button>
         ))}
@@ -69,10 +72,10 @@ export default function Leaderboard({ filterParams, onSelectPlayer }) {
               <th className="px-4 py-3 text-left">Player</th>
               <th className="px-4 py-3 text-center">Titles</th>
               <th className="px-4 py-3 text-center hidden sm:table-cell">GS Wins</th>
-              <th className="px-4 py-3 text-center hidden sm:table-cell">M1000 Wins</th>
+              <th className="px-4 py-3 text-center hidden sm:table-cell">{tourLabel} Wins</th>
               <th className="px-4 py-3 text-center">Runner-ups</th>
               <th className="px-4 py-3 text-center hidden md:table-cell">GS RU</th>
-              <th className="px-4 py-3 text-center hidden md:table-cell">M1000 RU</th>
+              <th className="px-4 py-3 text-center hidden md:table-cell">{tourLabel} RU</th>
               <th className="px-4 py-3 text-center">Finals</th>
             </tr>
           </thead>
@@ -88,17 +91,22 @@ export default function Leaderboard({ filterParams, onSelectPlayer }) {
                   <span className="font-medium text-white">
                     {FLAG_MAP[p.nationality] ?? ''} {p.player}
                   </span>
+                  {tour === 'Both' && (
+                    <span className={`ml-2 text-xs px-1.5 py-0.5 rounded-full ${
+                      p.tour === 'WTA' ? 'bg-pink-900/50 text-pink-300' : 'bg-blue-900/50 text-blue-300'
+                    }`}>{p.tour}</span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-center">
                   <span className="font-bold text-emerald-400">{p.wins}</span>
                 </td>
                 <td className="px-4 py-3 text-center text-slate-300 hidden sm:table-cell">{p.slam_wins}</td>
-                <td className="px-4 py-3 text-center text-slate-300 hidden sm:table-cell">{p.masters_wins}</td>
+                <td className="px-4 py-3 text-center text-slate-300 hidden sm:table-cell">{p.tour_wins}</td>
                 <td className="px-4 py-3 text-center">
                   <span className="font-bold text-amber-400">{p.runner_ups}</span>
                 </td>
                 <td className="px-4 py-3 text-center text-slate-300 hidden md:table-cell">{p.slam_ru}</td>
-                <td className="px-4 py-3 text-center text-slate-300 hidden md:table-cell">{p.masters_ru}</td>
+                <td className="px-4 py-3 text-center text-slate-300 hidden md:table-cell">{p.tour_ru}</td>
                 <td className="px-4 py-3 text-center">
                   <span className="text-slate-200 font-semibold">{p.finals}</span>
                 </td>

@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  Legend, ResponsiveContainer, ReferenceLine
+  Legend, ResponsiveContainer
 } from 'recharts';
 import { useApi } from '../hooks/useApi.js';
 
@@ -10,41 +10,51 @@ const PLAYER_COLORS = [
   '#EC4899', '#14B8A6', '#F97316', '#84CC16', '#06B6D4',
 ];
 
-const TOP_PLAYERS = [
+const ATP_PLAYERS = [
   'Novak Djokovic', 'Roger Federer', 'Rafael Nadal',
   'Andy Murray', 'Carlos Alcaraz', 'Daniil Medvedev',
-  'Alexander Zverev', 'Jannik Sinner', 'Lleyton Hewitt',
-  'Andre Agassi',
+  'Alexander Zverev', 'Jannik Sinner', 'Lleyton Hewitt', 'Andre Agassi',
 ];
 
-export default function TimelineChart({ meta }) {
-  const [selected, setSelected] = useState(['Novak Djokovic', 'Roger Federer', 'Rafael Nadal']);
+const WTA_PLAYERS = [
+  'Serena Williams', 'Steffi Graf', 'Justine Henin',
+  'Kim Clijsters', 'Maria Sharapova', 'Victoria Azarenka',
+  'Iga Swiatek', 'Ashleigh Barty', 'Naomi Osaka', 'Simona Halep',
+];
+
+const DEFAULTS = { ATP: ['Novak Djokovic', 'Roger Federer', 'Rafael Nadal'], WTA: ['Serena Williams', 'Justine Henin', 'Maria Sharapova'], Both: ['Novak Djokovic', 'Serena Williams', 'Rafael Nadal'] };
+
+export default function TimelineChart({ meta, tour, filterParams }) {
+  const [selected, setSelected] = useState(DEFAULTS[tour] ?? DEFAULTS.ATP);
   const [category, setCategory] = useState('');
   const [mode, setMode] = useState('cumulative');
 
-  // Fetch timeline for all selected players
+  useEffect(() => {
+    setSelected(DEFAULTS[tour] ?? DEFAULTS.ATP);
+    setCategory('');
+  }, [tour]);
+
+  const suggestedPlayers = tour === 'WTA' ? WTA_PLAYERS : tour === 'ATP' ? ATP_PLAYERS : [...ATP_PLAYERS.slice(0,5), ...WTA_PLAYERS.slice(0,5)];
+
   const queries = selected.map(p =>
-    `/api/timeline?player=${encodeURIComponent(p)}${category ? `&category=${encodeURIComponent(category)}` : ''}`
+    `/api/timeline?player=${encodeURIComponent(p)}&tour=${encodeURIComponent(tour)}${category ? `&category=${encodeURIComponent(category)}` : ''}`
   );
 
   const results = queries.map(q => useApi(q, [q]));
   const allLoaded = results.every(r => !r.loading);
 
-  // Build combined year data
-  const allYears = new Set();
-  for (let y = 2000; y <= 2024; y++) allYears.add(y);
+  const allYears = [];
+  for (let y = 2000; y <= 2024; y++) allYears.push(y);
 
-  const chartData = [...allYears].sort().map(year => {
+  const chartData = allYears.map(year => {
     const point = { year };
     selected.forEach((p, i) => {
       const yearRow = results[i].data?.find(r => r.year === year);
       point[`${p}_wins`] = yearRow?.wins ?? 0;
-      point[`${p}_ru`] = yearRow?.runner_ups ?? 0;
     });
     return point;
   });
 
-  // Convert to cumulative
   if (mode === 'cumulative') {
     const cumulative = {};
     for (const point of chartData) {
@@ -59,12 +69,14 @@ export default function TimelineChart({ meta }) {
     setSelected(s => s.includes(p) ? s.filter(x => x !== p) : [...s, p]);
   };
 
-  const availablePlayers = meta?.players || TOP_PLAYERS;
-  const suggestedPlayers = TOP_PLAYERS.filter(p => availablePlayers.includes(p));
+  const categoryOptions = tour === 'WTA'
+    ? [['', 'All'], ['Grand Slam', 'Grand Slams'], ['WTA 1000', 'WTA 1000'], ['WTA 500', 'WTA 500']]
+    : tour === 'ATP'
+    ? [['', 'All'], ['Grand Slam', 'Grand Slams'], ['Masters 1000', 'Masters 1000']]
+    : [['', 'All'], ['Grand Slam', 'Grand Slams']];
 
   return (
     <div className="space-y-4">
-      {/* Controls */}
       <div className="card">
         <div className="flex flex-wrap gap-4 items-start">
           <div>
@@ -91,18 +103,19 @@ export default function TimelineChart({ meta }) {
           </div>
           <div className="flex flex-col gap-1">
             <div className="text-xs text-slate-400">Category</div>
-            <div className="flex gap-1">
-              <button onClick={() => setCategory('')} className={`btn text-xs ${!category ? 'btn-active' : 'btn-inactive'}`}>All</button>
-              <button onClick={() => setCategory('Grand Slam')} className={`btn text-xs ${category==='Grand Slam' ? 'btn-active' : 'btn-inactive'}`}>Grand Slams</button>
-              <button onClick={() => setCategory('Masters 1000')} className={`btn text-xs ${category==='Masters 1000' ? 'btn-active' : 'btn-inactive'}`}>Masters 1000</button>
+            <div className="flex gap-1 flex-wrap">
+              {categoryOptions.map(([val, label]) => (
+                <button key={val} onClick={() => setCategory(val)} className={`btn text-xs ${category===val ? 'btn-active' : 'btn-inactive'}`}>
+                  {label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Chart */}
       <div className="card">
-        <h3 className="text-sm font-semibold text-slate-300 mb-4">
+        <h3 className="text-sm font-semibold font-display text-slate-300 mb-4">
           {mode === 'cumulative' ? 'Cumulative Titles Over Time' : 'Titles Per Year'}
         </h3>
         {!allLoaded ? (

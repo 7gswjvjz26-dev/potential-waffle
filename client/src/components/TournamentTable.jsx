@@ -9,6 +9,20 @@ const SURFACE_COLOR = {
   'Hard (i)': 'bg-violet-900/50 text-violet-300',
 };
 
+const CAT_STYLE = {
+  'Grand Slam': 'bg-yellow-900/50 text-yellow-300',
+  'Masters 1000': 'bg-slate-700 text-slate-300',
+  'WTA 1000': 'bg-pink-900/50 text-pink-300',
+  'WTA 500': 'bg-purple-900/50 text-purple-300',
+};
+
+const CAT_SHORT = {
+  'Grand Slam': 'GS',
+  'Masters 1000': 'M1K',
+  'WTA 1000': 'W1K',
+  'WTA 500': 'W500',
+};
+
 export default function TournamentTable({ filterParams, onSelectPlayer }) {
   const [sortCol, setSortCol] = useState('year');
   const [sortDir, setSortDir] = useState('asc');
@@ -58,12 +72,8 @@ export default function TournamentTable({ filterParams, onSelectPlayer }) {
                 <td className="px-4 py-2.5 font-mono text-slate-400">{row.year}</td>
                 <td className="px-4 py-2.5 font-medium text-white">{row.name}</td>
                 <td className="px-4 py-2.5">
-                  <span className={`text-xs px-2 py-0.5 rounded-full ${
-                    row.category === 'Grand Slam'
-                      ? 'bg-yellow-900/50 text-yellow-300'
-                      : 'bg-slate-700 text-slate-300'
-                  }`}>
-                    {row.category === 'Grand Slam' ? 'GS' : 'M1K'}
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${CAT_STYLE[row.category] ?? 'bg-slate-700 text-slate-300'}`}>
+                    {CAT_SHORT[row.category] ?? row.category}
                   </span>
                 </td>
                 <td className="px-4 py-2.5">
