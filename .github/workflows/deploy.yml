@@ -1,0 +1,52 @@
+name: Deploy to gamesetmatch.cuppatea.org
+
+on:
+  push:
+    branches: [claude/tennis-titles-dashboard-Nj9Hp]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            set -e
+            APP_DIR="/var/www/gamesetmatch"
+
+            # Clone on first deploy, pull on subsequent deploys
+            if [ ! -d "$APP_DIR/.git" ]; then
+              git clone https://github.com/7gswjvjz26-dev/potential-waffle.git "$APP_DIR"
+              cd "$APP_DIR"
+              git checkout claude/tennis-titles-dashboard-Nj9Hp
+            else
+              cd "$APP_DIR"
+              git fetch origin
+              git checkout claude/tennis-titles-dashboard-Nj9Hp
+              git pull origin claude/tennis-titles-dashboard-Nj9Hp
+            fi
+
+            # Install dependencies
+            npm install --workspaces
+
+            # Build frontend
+            npm run build --workspace=client
+
+            # Seed the database (safe to re-run — it wipes and re-seeds)
+            node server/src/seed.js
+
+            # Start / restart with PM2
+            if pm2 list | grep -q "gamesetmatch"; then
+              pm2 restart gamesetmatch
+            else
+              pm2 start server/src/index.js --name gamesetmatch
+              pm2 save
+            fi
+
+            echo "Deploy complete"
