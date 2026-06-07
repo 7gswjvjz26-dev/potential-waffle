@@ -20,7 +20,7 @@ ln -sf /etc/nginx/sites-available/gamesetmatch /etc/nginx/sites-enabled/gamesetm
 nginx -t && systemctl reload nginx
 
 # Set up app directory
-mkdir -p /var/www/gamesetmatch
+mkdir -p /opt/gamesetmatch
 
 echo ""
 echo "Server setup complete."
