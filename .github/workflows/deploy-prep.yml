@@ -1,0 +1,45 @@
+name: Deploy GL 11+ Prep to GitHub Pages
+
+on:
+  push:
+    branches: [claude/gl-11-plus-prep-site-1jdw4i, main]
+    paths: ['prep/**']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: prep/package-lock.json
+      - run: npm ci
+        working-directory: prep
+      - run: npm run build
+        working-directory: prep
+      - uses: actions/configure-pages@v4
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: prep/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
