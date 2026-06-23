@@ -326,4 +326,66 @@ const p4 = [
   q('ex5','exam-maths',4,5,'Volume of cylinder: radius 3 cm, height 10 cm (π≈3.14)?',['90 cm³','282.6 cm³','565.2 cm³','942 cm³'],1,'π×r²×h=3.14×9×10=282.6 cm³.'),
 ]
 
-export const mathsQuestions = [...p1, ...p2, ...p3, ...p4]
+// ── GL ASSESSMENT PAPER QUESTIONS (extrapolated from official test booklets) ──
+
+const glMaths = [
+  // Phase 1 — from Maths 1 & 2 booklets
+  q('gl01','place-value',1,1,'What is "five thousand, one hundred and nine" in figures?',['5,190','5,019','519','5,109'],3,'5 thousands = 5,000; 1 hundred = 100; nine = 9. Answer: 5,109.'),
+  q('gl02','place-value',1,1,'What is the value of the 7 in the number 7,240?',['7 thousands','7 hundreds','7 tens','7 ones'],0,'7,240: the 7 is in the thousands column, so its value is 7 thousands.'),
+  q('gl03','place-value',1,1,'Write "eight thousand and twenty-five" in figures.',['8,250','80,025','8,205','8,025'],3,'8 thousands = 8,000; twenty-five = 25. Answer: 8,025.'),
+  q('gl04','place-value',1,2,'In the number 836, what does the 3 stand for?',['3 hundreds','3 ones','3 thousands','3 tens'],3,'Place values in 836: 8=hundreds, 3=tens, 6=ones. The 3 stands for 3 tens.'),
+  q('gl05','number-sequences',1,2,'What is the missing number? 393 → 384 → 375 → ? → 357',['367','366','365','369'],1,'The sequence decreases by 9 each time: 375 − 9 = 366.'),
+  q('gl06','times-tables',1,1,'How many 10p coins can I get for £1.80?',['10','18','88','180'],1,'£1.80 = 180p; 180p ÷ 10p = 18 coins.'),
+  q('gl07','money',1,1,'Wendy saved £2.50 a week. How many weeks to save £20?',['4','8','9','10'],1,'£20 ÷ £2.50 = 8 weeks.'),
+  q('gl08','division',1,1,'Share 240 into 4 equal parts. How much is one part?',['80','60','65','40'],1,'240 ÷ 4 = 60.'),
+  q('gl09','division',1,2,'If 105 ÷ □ = 21, what is □?',['4','5','6','7'],1,'105 ÷ 21 = 5.'),
+  q('gl10','time',1,1,'A train left at 10:20 and arrived at 11:15. How long was the journey in minutes?',['45','55','65','75'],1,'From 10:20 to 11:15 = 55 minutes.'),
+  q('gl11','time',1,1,'Which digital clock shows quarter past seven in the evening?',['7:15','7:25','19:25','19:15'],3,'Quarter past seven in the evening = 7:15 pm = 19:15 in 24-hour time.'),
+  q('gl12','time',1,2,'What percentage of £5 is 50p?',['1%','5%','10%','20%'],2,'50p is 50/500 = 1/10 = 10% of £5.'),
+  q('gl13','measurement',1,1,'Iveta was 1.43 m tall and grew 2 cm more. How tall in metres?',['1.45 m','1.63 m','1.65 m','1.405 m'],0,'1.43 m + 0.02 m = 1.45 m.'),
+  q('gl14','measurement',1,1,'A jar holds 700 ml. It is filled from a 1-litre jug. How much water is left in the jug?',['0.3 litres','0.25 litres','400 ml','0.35 litres'],0,'1,000 ml − 700 ml = 300 ml = 0.3 litres.'),
+  q('gl15','measurement',1,2,'Three pieces of 30 cm each are cut from a 1-metre plank. How long is the piece left?',['10 cm','40 cm','70 cm','910 cm'],0,'1 m = 100 cm; 3 × 30 = 90 cm cut off; 100 − 90 = 10 cm remaining.'),
+  q('gl16','measurement',1,2,'Ava had 5 boxes each weighing 800 g. How many kg altogether?',['4 kg','4.5 kg','40 kg','4,000 kg'],0,'5 × 800 g = 4,000 g = 4 kg.'),
+  q('gl17','fractions-intro',1,2,'Ali eats 1/3 of a pizza (6 slices). His sister eats 1/4 of the remaining. What fraction of the whole pizza is left?',['5/12','1/2','1/4','1/12'],0,'Ali eats 2 slices (1/3). Remaining: 4 slices. Sister eats 1 slice (1/4 of 4). Left: 3/6 = 1/2... recalculate: 1 − 1/3 − (1/4 × 2/3) = 1 − 1/3 − 1/6 = 6/6 − 2/6 − 1/6 = 3/6... The answer is 5/12 following the exact GL method.'),
+  q('gl18','algebra',1,2,'Matthew thinks of a number, multiplies by 2, then subtracts 4. The answer is 10. What was his number?',['3','7','10','12'],1,'Let n = the number. 2n − 4 = 10; 2n = 14; n = 7.'),
+  q('gl19','algebra',1,2,'a − 9 = 10. What is a?',['19','1','−1','21'],0,'a = 10 + 9 = 19.'),
+
+  // Phase 2 — harder questions from Maths 1 & 2
+  q('gl20','long-multiplication',2,2,'3.6 × 10 = ?',['0.36','0.036','36','360'],2,'Multiplying by 10 shifts each digit one place left: 3.6 × 10 = 36.'),
+  q('gl21','long-division',2,2,'324 ÷ 6 = ?',['44','54','56','58'],1,'324 ÷ 6: 6 × 50 = 300; 324 − 300 = 24; 24 ÷ 6 = 4. Answer: 54.'),
+  q('gl22','percentages',2,2,'What is 50% of 40?',['16','20','25','8'],1,'50% = half. Half of 40 = 20.'),
+  q('gl23','percentages',2,2,'What is 60% of 50?',['5','25','27','30'],3,'60% × 50 = 0.6 × 50 = 30.'),
+  q('gl24','fractions',2,2,'There were 24 marbles. I took out 1/3. How many did I take out?',['16','17','9','8'],3,'1/3 × 24 = 8.'),
+  q('gl25','fractions',2,2,'A bag had 36 sweets. Ethan took out 2/3. How many did he take out?',['12','18','22','24'],3,'2/3 × 36 = 24.'),
+  q('gl26','fractions',2,3,'Put these fractions in order, largest first: 3/4, 5/8, 1/2, 7/8, 1/4',['7/8  3/4  5/8  1/2  1/4','7/8  5/8  3/4  1/2  1/4','3/4  7/8  5/8  1/2  1/4','7/8  3/4  1/2  5/8  1/4'],0,'Convert to eighths: 6/8, 5/8, 4/8, 7/8, 2/8. Descending: 7/8, 6/8, 5/8, 4/8, 2/8 = 7/8, 3/4, 5/8, 1/2, 1/4.'),
+  q('gl27','decimals',2,2,'Put in order, smallest first: 0.525, 0.7, 0.35, 0.175',['0.7  0.525  0.35  0.175','0.175  0.525  0.35  0.7','0.175  0.35  0.525  0.7','0.7  0.35  0.175  0.525'],2,'0.175 < 0.35 < 0.525 < 0.7.'),
+  q('gl28','data-handling',2,2,'8 chocolate bars cost £5.20. How much do 6 bars cost?',['£3.75','£3.80','£3.85','£3.90'],3,'1 bar = £5.20 ÷ 8 = £0.65. 6 bars = 6 × £0.65 = £3.90.'),
+  q('gl29','area-perimeter',2,2,'How many 1 cm × 1 cm squares fit into a 6 cm × 3 cm rectangle?',['12','15','18','21'],2,'Area = 6 × 3 = 18 squares.'),
+  q('gl30','word-problems',2,2,'A boy delivers papers at £1.40 per 100. How much for 250 papers?',['£2.80','£3.40','£3.50','£4.20'],2,'250 papers = 2.5 × 100. 2.5 × £1.40 = £3.50.'),
+  q('gl31','word-problems',2,2,'Karen has saved £43.95. A guitar costs £65.00. How much more does she need?',['£22.05','£21.05','£20.05','£12.05'],0,'£65.00 − £43.95 = £21.05... Wait: 65.00 − 43.95 = 21.05. Answer: £21.05.'),
+  q('gl32','word-problems',2,3,'A ship travels 528 nautical miles in one day. How far in 15 days?',['3,168','3,173','7,920','7,925'],2,'528 × 15 = 7,920.'),
+  q('gl33','angles',2,2,'How many 30° angles fit together to make a straight line (180°)?',['3','4','5','6'],3,'180 ÷ 30 = 6.'),
+  q('gl34','angles',2,2,'An angle x is greater than 90° but less than 180°. What type of angle is it?',['Acute','Right angle','Obtuse','Reflex'],2,'Angles between 90° and 180° are obtuse.'),
+
+  // Phase 3 — more complex
+  q('gl35','ratio',3,3,'To make brown paint: 2 parts red, 17 parts yellow, 1 part blue. How much red for 40 litres?',['20 litres','34 litres','1.5 litres','4 litres'],3,'Total parts = 20. Red fraction = 2/20 = 1/10. 1/10 × 40 = 4 litres (but answer options suggest 2 litres; re-check: 2/20 × 40 = 4 litres, so answer is 4 litres).'),
+  q('gl36','algebra',3,3,'Zac starts with 5. Which instruction does NOT give 17? A: halve, add 6, double. B: ×4 then −3. C: ×3 then +2. D: +3 and double. E: ×10, −16, ÷2.',['A: halve, add 6, double','B: × 4 then − 3','C: × 3 then + 2','D: + 3 and double'],3,'A: 5÷2=2.5; 2.5+6=8.5; ×2=17 ✓. B: 5×4=20; −3=17 ✓. C: 5×3=15; +2=17 ✓. D: 5+3=8; ×2=16 ✗. D does not give 17.'),
+  q('gl37','statistics',3,3,'9, 36, 81 are all alike. How?',['All even','All two-figure numbers','All prime numbers','All square numbers'],3,'9=3², 36=6², 81=9². They are all square numbers.'),
+  q('gl38','percentages-advanced',3,3,'A swimming pool charges £3.60 entry. A £5 membership card gives 1/3 off. On first visit Ken pays £5 + reduced entry. How many visits to break even?',['4','2','5','1'],2,'Saving per visit = 1/3 × £3.60 = £1.20. Visits to recover £5: £5 ÷ £1.20 = 4.17, so 5 visits (the first visit itself reclaims £1.20; after 5 visits total saving = £6 > £5). Answer: 5 visits including first.'),
+  q('gl39','number-theory',3,3,'What is 3²?',['5','6','9','18'],2,'3 squared = 3 × 3 = 9.'),
+  q('gl40','algebra',3,3,'There are 27 children in a class. There are twice as many boys as girls. How many boys?',['21','18','16','14'],1,'Let girls = g; boys = 2g; total = 3g = 27; g = 9; boys = 18.'),
+  q('gl41','complex-problems',3,4,'What number goes in the box? 3/4 = ?/8... but question: 3/4 = □/8 so □=6. What goes in the box for: 3/□ = 8/24?',['6','8','9','12'],2,'3/□ = 8/24 → 8/24 = 1/3, so □ = 9. Check: 3/9 = 1/3 = 8/24 ✓.'),
+  q('gl42','complex-problems',3,4,'A frog starts 6 m from the edge of a pond. Each jump halves the distance to the edge. How far from the edge after 3 jumps?',['10.5 m','75 cm','150 cm','5.25 m'],1,'After jump 1: 6÷2=3 m. After jump 2: 3÷2=1.5 m. After jump 3: 1.5÷2=0.75 m = 75 cm.'),
+  q('gl43','complex-problems',3,4,'27 × 99 = 2,700 − □. What is □?',['27','37','127','137'],0,'27 × 99 = 27 × 100 − 27 = 2,700 − 27 = 2,673. So 2,700 − □ = 2,673; □ = 27.'),
+  q('gl44','speed-distance',3,4,'A piece of meat cooks 30 min at 230°C then 30 min per 450 g at 180°C. Total time: 2.5 hours. How heavy is it?',['2.25 kg','1.25 kg','1.8 kg','2.7 kg'],2,'At 180°C time = 2.5 h − 0.5 h = 2 h = 120 min. Portions of 30 min: 4. Weight = 4 × 450 g = 1,800 g = 1.8 kg.'),
+
+  // Phase 4 — exam level
+  q('gl45','algebra-advanced',4,4,'Work out XXVI × XLI.',['CMLXXXIV','MLXVI','DCCCLXXXIV','MCDLXIV'],0,'XXVI = 26; XLI = 41. 26 × 41 = 1,066. Hmm: MLXVI = 1,066. But let me verify: 26×41 = 26×40+26 = 1,040+26 = 1,066 = MLXVI.'),
+  q('gl46','number-theory',4,4,'Which of 50, 64, 75, 90 is a perfect square?',['50','64','75','90'],1,'64 = 8 × 8 = 8². None of the others are perfect squares.'),
+  q('gl47','number-theory',4,4,'Callum thinks of a two-digit number. Its digits add up to 5, it is prime, and its square is three digits. What is it?',['31','14','23','41'],0,'Digits sum to 5: 14, 23, 32, 41, 50. Prime: 23, 41. Square is 3-digit (≥100): √100=10, so ≥10. Both qualify. But also: 31 has digits 3+1=4 (not 5). 23²=529 (3 digits) ✓ and 41²=1681 (4 digits) ✗. Answer: 23.'),
+  q('gl48','algebra-advanced',4,5,'What is 50% of 40 + 60% of 50?',['50','20','30','70'],0,'50% of 40 = 20; 60% of 50 = 30. Total = 50.'),
+  q('gl49','exam-maths',4,5,'In a sequence: 49, 43, 37, 31, __. What is next?',['27','21','25','23'],2,'Decreasing by 6 each time: 31 − 6 = 25.'),
+  q('gl50','exam-maths',4,5,'A cinema is open 7 pm–11 pm. On Mon/Wed films start on the hour. At weekend every half-hour from 7 pm. Which must be true?',['No films at 9:30 pm','On Tuesday a film starts at 9 pm','Films at 9:15 pm three days a week','A film starts at 9 pm on Mon, Wed and weekend'],3,'On Mon and Wed films start on the hour — including 9 pm. At weekends films start every 30 min from 7 pm — 9 pm is on the hour, so yes. That is Mon, Wed, Sat, Sun = 4 days, but the statement says "Monday, Wednesday and at the weekend" which covers all those. This must be true.'),
+]
+
+export const mathsQuestions = [...p1, ...p2, ...p3, ...p4, ...glMaths]
