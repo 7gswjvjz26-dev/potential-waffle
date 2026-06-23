@@ -3,3 +3,4 @@ client/dist/
 server/tennis.db
 *.log
 .DS_Store
+.claude/
