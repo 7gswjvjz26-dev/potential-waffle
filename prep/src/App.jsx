@@ -56,6 +56,7 @@ export default function App() {
       {view === 'practice' && session && (
         <PracticeSession
           session={session}
+          questionHistory={progress.questionHistory}
           onFinish={finishSession}
           onExit={() => setView('dashboard')}
         />

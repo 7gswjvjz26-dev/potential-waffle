@@ -25,21 +25,23 @@ function shuffle(arr) {
 function pickQuestions(subject, phase, topicId, count, questionHistory) {
   const pool = ALL_QUESTIONS[subject] || []
   let filtered = pool.filter(q => q.phase <= phase && q.topic === topicId)
-  if (!filtered.length) {
-    filtered = pool.filter(q => q.phase <= phase)
-  }
+  if (!filtered.length) filtered = pool.filter(q => q.phase <= phase)
   if (!filtered.length) filtered = pool
 
-  // Prioritise questions seen fewer times or answered incorrectly
-  filtered.sort((a, b) => {
-    const ha = questionHistory[a.id] || { seen: 0, correct: 0 }
-    const hb = questionHistory[b.id] || { seen: 0, correct: 0 }
-    const scoreA = ha.seen === 0 ? -1 : ha.correct / ha.seen
-    const scoreB = hb.seen === 0 ? -1 : hb.correct / hb.seen
-    return scoreA - scoreB
+  // Split into unseen and seen
+  const unseen = filtered.filter(q => !(questionHistory[q.id]?.seen > 0))
+  const seen = filtered.filter(q => questionHistory[q.id]?.seen > 0)
+
+  // Sort seen by accuracy ascending (worst first) so review targets weakest material
+  seen.sort((a, b) => {
+    const ha = questionHistory[a.id]
+    const hb = questionHistory[b.id]
+    return (ha.correct / ha.seen) - (hb.correct / hb.seen)
   })
 
-  return shuffle(filtered.slice(0, Math.min(count * 2, filtered.length))).slice(0, count)
+  // Fill from unseen first; only dip into seen when unseen pool runs dry
+  const candidates = [...shuffle(unseen), ...seen]
+  return candidates.slice(0, count)
 }
 
 function formatTime(s) {
@@ -48,14 +50,14 @@ function formatTime(s) {
   return `${m}:${sec.toString().padStart(2, '0')}`
 }
 
-export default function PracticeSession({ session, onFinish, onExit }) {
+export default function PracticeSession({ session, questionHistory = {}, onFinish, onExit }) {
   const { subject, phase, topicId } = session
   const sub = SUBJECTS[subject]
   const topics = TOPICS[subject][phase] || []
   const topicName = topics.find(t => t.id === topicId)?.name || topicId
 
   const qCount = getQuestionsPerSession(phase)
-  const [questions] = useState(() => pickQuestions(subject, phase, topicId, qCount, {}))
+  const [questions] = useState(() => pickQuestions(subject, phase, topicId, qCount, questionHistory))
   const [current, setCurrent] = useState(0)
   const [selected, setSelected] = useState(null)
   const [revealed, setRevealed] = useState(false)
