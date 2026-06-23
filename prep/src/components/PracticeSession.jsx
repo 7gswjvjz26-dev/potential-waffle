@@ -28,20 +28,38 @@ function pickQuestions(subject, phase, topicId, count, questionHistory) {
   if (!filtered.length) filtered = pool.filter(q => q.phase <= phase)
   if (!filtered.length) filtered = pool
 
-  // Split into unseen and seen
   const unseen = filtered.filter(q => !(questionHistory[q.id]?.seen > 0))
   const seen = filtered.filter(q => questionHistory[q.id]?.seen > 0)
 
-  // Sort seen by accuracy ascending (worst first) so review targets weakest material
   seen.sort((a, b) => {
     const ha = questionHistory[a.id]
     const hb = questionHistory[b.id]
     return (ha.correct / ha.seen) - (hb.correct / hb.seen)
   })
 
-  // Fill from unseen first; only dip into seen when unseen pool runs dry
-  const candidates = [...shuffle(unseen), ...seen]
-  return candidates.slice(0, count)
+  const ordered = [...shuffle(unseen), ...seen]
+
+  // Expand passage groups: when any question from a group is selected, include all siblings
+  const result = []
+  const addedIds = new Set()
+  for (const q of ordered) {
+    if (result.length >= count + 6) break
+    if (addedIds.has(q.id)) continue
+    if (q.passageId) {
+      const siblings = filtered.filter(p => p.passageId === q.passageId)
+      for (const sibling of siblings) {
+        if (!addedIds.has(sibling.id)) {
+          result.push(sibling)
+          addedIds.add(sibling.id)
+        }
+      }
+    } else {
+      result.push(q)
+      addedIds.add(q.id)
+    }
+  }
+
+  return result.slice(0, count + 6)
 }
 
 function formatTime(s) {
@@ -64,6 +82,7 @@ export default function PracticeSession({ session, questionHistory = {}, onFinis
   const [answers, setAnswers] = useState([])
   const [elapsed, setElapsed] = useState(0)
   const startTime = useRef(Date.now())
+  const passageRef = useRef(null)
 
   useEffect(() => {
     const id = setInterval(() => setElapsed(Math.floor((Date.now() - startTime.current) / 1000)), 1000)
@@ -71,6 +90,11 @@ export default function PracticeSession({ session, questionHistory = {}, onFinis
   }, [])
 
   const q = questions[current]
+
+  // Scroll passage back to top whenever we move to a new passage group
+  useEffect(() => {
+    if (passageRef.current) passageRef.current.scrollTop = 0
+  }, [q?.passageId])
 
   const handleSelect = (i) => {
     if (revealed) return
@@ -105,6 +129,10 @@ export default function PracticeSession({ session, questionHistory = {}, onFinis
 
   const progress = ((current) / questions.length) * 100
 
+  // Passage group info
+  const passageQuestions = q.passageId ? questions.filter(p => p.passageId === q.passageId) : []
+  const passageIndex = q.passageId ? passageQuestions.findIndex(p => p.id === q.id) + 1 : 0
+
   return (
     <main className="max-w-2xl mx-auto px-4 py-6">
       {/* Session header */}
@@ -135,10 +163,34 @@ export default function PracticeSession({ session, questionHistory = {}, onFinis
       {/* Question counter */}
       <div className="flex items-center justify-between mb-5">
         <span className="text-sm font-semibold text-slate-500">Question {current + 1} of {questions.length}</span>
-        <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-500">
-          Difficulty {q.difficulty}/5
-        </span>
+        {q.passageId ? (
+          <span className="text-xs px-2 py-1 rounded-full text-white font-medium" style={{ background: sub.color }}>
+            Passage question {passageIndex} of {passageQuestions.length}
+          </span>
+        ) : (
+          <span className="text-xs px-2 py-1 rounded-full bg-slate-100 text-slate-500">
+            Difficulty {q.difficulty}/5
+          </span>
+        )}
       </div>
+
+      {/* Passage panel — stays visible for all questions sharing the same passageId */}
+      {q.passageId && q.passage && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-4">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-xs font-semibold text-amber-700 uppercase tracking-wide">Read the passage</span>
+          </div>
+          <div
+            ref={passageRef}
+            className="text-sm text-slate-700 leading-relaxed max-h-52 overflow-y-auto pr-1"
+            style={{ scrollbarWidth: 'thin' }}
+          >
+            {q.passage.split('\n').map((line, i) => (
+              <p key={i} className={line.trim() === '' ? 'mt-2' : ''}>{line}</p>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Question */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-5">

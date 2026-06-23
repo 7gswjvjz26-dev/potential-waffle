@@ -3,6 +3,11 @@ const q = (id, topic, phase, diff, question, options, answer, explanation) => ({
   question, options, answer, explanation,
 })
 
+const pq = (passageId, passage, id, topic, phase, diff, question, options, answer, explanation) => ({
+  ...q(id, topic, phase, diff, question, options, answer, explanation),
+  passageId, passage,
+})
+
 // ── PHASE 1 ──────────────────────────────────────────────────────────────────
 const p1 = [
   // Parts of Speech
@@ -297,4 +302,104 @@ const glEnglish = [
   q('gle05','complex-grammar',4,4,'Which sentence is in the subjunctive mood?',['I wish I was taller.','I wish I were taller.','I wish I am taller.','I wish I will be taller.'],1,'The subjunctive is used for hypothetical situations. "I wish I WERE taller" uses the subjunctive; "was" would be the indicative mood.'),
 ]
 
-export const englishQuestions = [...p1, ...p2, ...p3, ...p4, ...glEnglish]
+const SWISS_PASSAGE = `The winds at length were lulled, the sun shot his brilliant rays through the clouds, the rain ceased to fall – spring had come. No prisoners set free could have felt more joy than we did as we stepped out from our winter home. We refreshed our eyes with the pleasant greenery around us, and our ears with the merry songs of a thousand happy birds, and drank in the pure air of spring.
+
+Our tree house was our first care: filled with leaves and broken and torn by the wind, it looked indeed dilapidated. We worked hard, and in a few days it was again habitable. I was anxious to visit the tent, for I feared that much of our precious stores might have suffered. The damage done to Falconhurst was nothing compared to the scene that awaited us. The tent was blown to the ground, the canvas torn to rags, and the provisions soaked. We immediately spread the things that we hoped to preserve in the sun to dry.
+
+The irreparable damage we had suffered made me resolve to find some safer and more stable winter-quarters before the arrival of the next rainy season. Fritz proposed that we should hollow out a cave in the rock. The difficulties such a task would present appeared almost insurmountable, yet I was determined to make the attempt.
+
+Six days of hard and incessant toil made little impression. We still did not despair, and were soon rewarded by coming to a softer substance; our work progressed. On the tenth day, Jack shouted: 'Gone, father! My bar has gone through the mountain!' A thin wall was all that stood between us and a great cavern. We battered vigorously at the rock; piece by piece fell, and soon the hole was large enough for us to enter. We were in a cave of diamonds – a vast chamber of glittering crystal. The floor was formed of hard, dry sand, so dry that we might safely make our home inside it.`
+
+const GARDEN_PASSAGE = `She looked at the key quite a long time. She turned it over and over, and thought about it. If it was the key to the closed garden, and she could find out where the door was, she could perhaps open it and see what was inside the walls. It seemed as if it must be different from other places and that something strange must have happened to it during ten years. Besides that, if she liked it she could go into it every day and shut the door behind her, and she could make up some play of her own and play it quite alone, because nobody would ever know where she was, but would think the door was still locked and the key buried in the earth.
+
+She put the key in her pocket and walked up and down her path. The ivy was the baffling thing. Howsoever carefully she looked she could see nothing but thickly growing, glossy, dark green leaves.
+
+The skipping-rope was a wonderful thing. The sun was shining and a little wind was blowing – not a rough wind, but one which came in delightful little gusts and brought a fresh scent of newly turned earth with it. Mary had stepped close to the robin, and suddenly the gust of wind swung aside some loose ivy trails, and more suddenly still she jumped toward it and caught it in her hand. She had seen something under it – a round knob which had been covered by the leaves hanging over it. It was the knob of a door.
+
+She put her hands under the leaves and began to pull them aside. Mary's heart began to thump and her hands to shake a little in her delight and excitement. She put the key in and turned it. It took two hands to do it, but it did turn. Then she slipped through the door, shut it behind her, and stood looking about her and breathing quite fast with excitement, and wonder, and delight. She was standing inside the secret garden.`
+
+const glEnglishPassages = [
+  // Swiss Family Robinson comprehension
+  pq('pass-swiss', SWISS_PASSAGE, 'egls01','comprehension-basic',2,2,
+    'At what time of year is the passage set?',
+    ['Winter','Spring','Rainy season','Mid-summer'],
+    1,
+    'The passage opens: "spring had come." The family emerges from their winter home into spring.'
+  ),
+  pq('pass-swiss', SWISS_PASSAGE, 'egls02','comprehension-inference',2,2,
+    'The father compares his family to "prisoners set free". Why?',
+    ['They had been held hostage.','They had been trapped indoors by stormy winter weather.','They had been caught in heavy rain.','They had been unfairly accused of crimes.'],
+    1,
+    'The "prisoners" simile captures the intensity of their joy and relief at being able to go outside again after a long, stormy winter spent cooped indoors.'
+  ),
+  pq('pass-swiss', SWISS_PASSAGE, 'egls03','comprehension-inference',2,2,
+    'How did the family attempt to rescue their soaked supplies?',
+    ['They shook the water off them.','They fetched new materials to replace them.','They placed them out in the sun to dry.','They built a fire to dry them out.'],
+    2,
+    '"We immediately spread the things that we hoped to preserve in the sun to dry."'
+  ),
+  pq('pass-swiss', SWISS_PASSAGE, 'egls04','comprehension-inference',2,3,
+    'If they only managed to carve a small cave, what did the father hope to use it for?',
+    ['A shelter for emergencies','A storage space for their most valuable supplies','A playroom for the children','A house for their dog'],
+    1,
+    '"We might at least make a cellar for the more valuable and perishable of our stores." A storage space for supplies.'
+  ),
+  pq('pass-swiss', SWISS_PASSAGE, 'egls05','vocabulary-medium',2,2,
+    'What does "dilapidated" mean in context: "it looked indeed dilapidated"?',
+    ['New and freshly built','In a state of disrepair; run-down','Clean and tidy','Enormous'],
+    1,
+    '"Dilapidated" describes something worn down and in poor condition — the tree house had been damaged by the wind.'
+  ),
+  pq('pass-swiss', SWISS_PASSAGE, 'egls06','vocabulary-medium',2,2,
+    'What does "insurmountable" mean: "difficulties appeared almost insurmountable"?',
+    ['Easy to overcome','Slightly difficult','Impossible to overcome','Surprising'],
+    2,
+    '"Insurmountable" means too great to overcome. The cave-digging task seemed nearly impossible.'
+  ),
+  pq('pass-swiss', SWISS_PASSAGE, 'egls07','comprehension-author',3,3,
+    '"We were in a cave of diamonds." What literary device is this?',
+    ['Simile','Metaphor','Personification','Hyperbole'],
+    1,
+    'Calling the cave "a cave of diamonds" without using "like" or "as" is a metaphor — the crystal formations are compared directly to diamonds.'
+  ),
+
+  // Secret Garden comprehension
+  pq('pass-garden', GARDEN_PASSAGE, 'eglg01','comprehension-basic',2,2,
+    'For how long had the secret garden been locked?',
+    ['Seven years','Eight years','Nine years','Ten years'],
+    3,
+    '"Something strange must have happened to it during ten years." The garden had been locked for ten years.'
+  ),
+  pq('pass-garden', GARDEN_PASSAGE, 'eglg02','comprehension-inference',2,2,
+    'Why was Mary keen to keep the garden secret even if she found the entrance?',
+    ['She didn\'t trust anyone else.','People had warned her not to go in.','She wanted to play there alone, undetected.','Mary found it thrilling to keep secrets.'],
+    2,
+    '"She could make up some play of her own and play it quite alone, because nobody would ever know where she was." She wanted a private place to play.'
+  ),
+  pq('pass-garden', GARDEN_PASSAGE, 'eglg03','comprehension-inference',2,2,
+    'Why was it hard to see whether there was a door in the garden wall?',
+    ['The walls were very tall.','The garden walls were covered in thick ivy.','There were trees obscuring the walls.','Mary only looked after dark.'],
+    1,
+    '"The ivy was the baffling thing. Howsoever carefully she looked she could see nothing but thickly growing, glossy, dark green leaves."'
+  ),
+  pq('pass-garden', GARDEN_PASSAGE, 'eglg04','comprehension-author',3,3,
+    'The ivy is described as "a loose and swinging curtain". What does this metaphor suggest?',
+    ['The ivy is damaged.','The ivy hangs like a curtain, concealing the door behind it.','The ivy looks like a stage curtain.','The ivy is dead.'],
+    1,
+    'Calling the ivy a "curtain" implies it hangs in the same way as a curtain — concealing what lies behind it, namely the door to the garden.'
+  ),
+  pq('pass-garden', GARDEN_PASSAGE, 'eglg05','comprehension-author',3,3,
+    'Why is there an emphasis on Mary\'s breathing in the last paragraph?',
+    ['Mary had been skipping a lot and was out of breath.','The key was hard to turn so she had to breathe deeply.','Mary was breathless with excitement and anticipation.','Mary was calling to her friends.'],
+    2,
+    '"Breathing quite fast with excitement, and wonder, and delight." The rapid breathing reflects her overwhelming emotion at finally entering the garden.'
+  ),
+  pq('pass-garden', GARDEN_PASSAGE, 'eglg06','vocabulary-advanced',3,3,
+    'What does "baffling" mean: "The ivy was the baffling thing"?',
+    ['Obvious','Confusing or puzzling','Beautiful','Dangerous'],
+    1,
+    '"Baffling" means difficult to understand or explain. The ivy was puzzling Mary because she could not see past it to find the door.'
+  ),
+]
+
+export const englishQuestions = [...p1, ...p2, ...p3, ...p4, ...glEnglish, ...glEnglishPassages]

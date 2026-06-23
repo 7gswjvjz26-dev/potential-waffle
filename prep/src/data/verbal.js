@@ -3,6 +3,11 @@ const q = (id, topic, phase, diff, question, options, answer, explanation) => ({
   question, options, answer, explanation,
 })
 
+const pq = (passageId, passage, id, topic, phase, diff, question, options, answer, explanation) => ({
+  ...q(id, topic, phase, diff, question, options, answer, explanation),
+  passageId, passage,
+})
+
 // ── PHASE 1 ──────────────────────────────────────────────────────────────────
 const p1 = [
   // Odd One Out
@@ -309,9 +314,190 @@ const glVerbal = [
   q('gvwp03','word-pairs',2,3,'Find the missing word: (puzzle [zip] boiler) (nettle [?] brands)',['tan','tee','ten','tar'],2,'From the GL paper: puzzle[zip]boiler → puzzle: puzZle has Z, boIler has I, and P? ZI+P from the two words makes ZIP. How? pu-ZZ-le: Z at position 3; bOIler: OI at positions 2-3; and P... Hmm. Or: puZZle last Z = pos 4? puzzle: p-u-z-z-l-e positions 3,4 = ZZ; boiLer: position 1 = B? That gives ZZB? Not ZIP. Try: puzzle first 2 = PU, boiler first 1 = B → PUB? No. Try: last 3 of puzzle = ZLE; first 3 of boiler = BOI → Z+B? Hmm. Different approach: the hidden word is contained within the two words spanning the boundary: "puzzlE ZIp boILer" → Z-I-P spanning between puzzle and boiler? No, they\'re separate words in brackets. The answer from GL paper is C=ten: nettle[ten]brands → netTLE + braNDs? TEN: T from netTle at pos 4, E from nettlE pos 6, N from Nettle pos 1? Or: neTtlE contains TE (pos 3,6?). Actually "nettle" backwards isn\'t helpful. From the solution: neTtle has T at pos 3; brands has nothing matching. I\'ll trust GL: answer C=ten.'),
 
   // ── LOGIC PUZZLES (from VR1 & VR2) ──────────────────────────────────────────
-  q('gvlp01','logical-deduction',2,3,'Darren bought 8 oranges. Rosario bought 3 fewer than Darren and 1 fewer than Chris. Laura bought 3 fewer than Chris. How many oranges did Laura buy?',['1','9','3','2'],3,'Darren=8. Rosario=8-3=5. Rosario=Chris-1 → Chris=6. Laura=Chris-3=6-3=3. Wait: Laura=3 is option C. But GL answer is E=2? Let me recheck: Rosario=Darren-3=5, Rosario=Chris-1 → 5=Chris-1 → Chris=6. Laura=Chris-3=6-3=3. GL answer should be 3 (C). But listed option D=2. The GL paper answer is E=2? Let me check from paper: answers were A=1,B=9,C=3,D=5,E=2. Laura = Chris-3 = 6-3 = 3 = C.'),
-  q('gvlp02','logical-deduction',3,4,'In a block of flats: Natalie lives 2 floors below Michelle and 1 above Christopher. Yousuf lives 1 above Natalie. Matthew lives 1 below Michelle. Who lives on the same floor?',['Yousuf and Natalie','Yousuf and Matthew','Matthew and Michelle','Christopher and Matthew'],1,'Michelle=4, Natalie=2 (4-2), Christopher=1 (2-1), Yousuf=3 (2+1), Matthew=3 (4-1). Yousuf and Matthew are both on floor 3.'),
-  q('gvlp03','logical-deduction',3,4,'5 children grow tomatoes. Jessica has 3 plants (one much taller). Mohammed has 3 healthy plants. Peter and Becky did NOT grow all 3 plants each (so each has ≤2). Tanya only planted 1 seed (so has ≤1 plant) and has the fewest plants. How many plants total?',['8','9','11','13'],1,'Jessica=3, Mohammed=3, Tanya=1 (fewest but planted 1 so has at most 1). Peter and Becky each have ≤2 plants, not all 3. Minimum total: 3+3+1+1+1=9 and at most 3+3+1+2+2=11. For Tanya to have fewest (1), others must have ≥1. Peter and Becky each have 2 (they couldn\'t grow all 3 but likely grew 2). Total: 3+3+1+2+2=11? But that makes Tanya have 1 which is fewer than others\' 2. Hmm: if Peter=1 and Becky=1, total = 3+3+1+1+1=9 and Tanya=1 ties with Peter and Becky = all have 1, so Tanya doesn\'t have "fewest". So Peter and Becky each need ≥2: minimum 2 each. Then Tanya=1 is truly fewest. Total = 3+3+1+2+2=11. But GL answer is B=9.'),
+  // ── PASSAGE GROUPS ──────────────────────────────────────────────────────────
+  pq('pass-oranges',
+    'At the shops, Darren bought 8 oranges. Laura bought 3 oranges fewer than Chris. Rosario bought 3 oranges fewer than Darren and 1 fewer than Chris.',
+    'gvlp01','logical-deduction',2,3,'How many oranges did Laura buy?',['1','9','3','5'],2,
+    'Rosario = Darren − 3 = 5. Rosario = Chris − 1, so Chris = 6. Laura = Chris − 3 = 3.'
+  ),
+  pq('pass-oranges',
+    'At the shops, Darren bought 8 oranges. Laura bought 3 oranges fewer than Chris. Rosario bought 3 oranges fewer than Darren and 1 fewer than Chris.',
+    'gvlp01b','logical-deduction',2,3,'How many oranges did Chris buy?',['3','5','6','8'],2,
+    'Rosario = Darren − 3 = 5. Rosario = Chris − 1 → Chris = Rosario + 1 = 6.'
+  ),
+  pq('pass-oranges',
+    'At the shops, Darren bought 8 oranges. Laura bought 3 oranges fewer than Chris. Rosario bought 3 oranges fewer than Darren and 1 fewer than Chris.',
+    'gvlp01c','logical-deduction',2,3,'Who bought the most oranges?',['Laura','Chris','Rosario','Darren'],3,
+    'Darren = 8, Chris = 6, Rosario = 5, Laura = 3. Darren bought the most.'
+  ),
+
+  pq('pass-flats',
+    'In a block of flats, Natalie lives two floors below Michelle and one floor above Christopher. Yousuf lives one floor above Natalie. Matthew lives one floor below Michelle.',
+    'gvlp02','logical-deduction',3,4,'Who lives on the same floor?',['Yousuf and Natalie','Yousuf and Matthew','Matthew and Michelle','Christopher and Matthew'],1,
+    'Michelle = floor 4, Natalie = 2 (4−2), Christopher = 1 (2−1), Yousuf = 3 (2+1), Matthew = 3 (4−1). Yousuf and Matthew both on floor 3.'
+  ),
+  pq('pass-flats',
+    'In a block of flats, Natalie lives two floors below Michelle and one floor above Christopher. Yousuf lives one floor above Natalie. Matthew lives one floor below Michelle.',
+    'gvlp02b','logical-deduction',3,4,'Who lives on the highest floor?',['Christopher','Natalie','Yousuf','Michelle'],3,
+    'Michelle is on floor 4, the highest. Christopher = 1, Natalie = 2, Yousuf = 3, Matthew = 3.'
+  ),
+  pq('pass-flats',
+    'In a block of flats, Natalie lives two floors below Michelle and one floor above Christopher. Yousuf lives one floor above Natalie. Matthew lives one floor below Michelle.',
+    'gvlp02c','logical-deduction',3,4,'How many floors above Christopher does Yousuf live?',['1','2','3','4'],1,
+    'Christopher = floor 1, Yousuf = floor 3. Difference = 3 − 1 = 2 floors.'
+  ),
+
+  pq('pass-tomatoes',
+    'Jessica, Peter, Mohammed, Tanya and Becky are each given three seeds. After two months: Jessica has one plant much taller than her other two. Mohammed has three healthy (but smaller) plants. Peter and Becky could not grow all three plants from their seeds. Tanya only planted one seed. Tanya has the fewest plants.',
+    'gvlp03','logical-deduction',3,4,'How many tomato plants did the children grow in total?',['8','9','11','13'],2,
+    'Jessica = 3, Mohammed = 3, Tanya = 1 (fewest). For Tanya to be fewest, Peter and Becky each need ≥ 2 plants (they failed to grow all 3, so each = 2). Total = 3+3+1+2+2 = 11.'
+  ),
+  pq('pass-tomatoes',
+    'Jessica, Peter, Mohammed, Tanya and Becky are each given three seeds. After two months: Jessica has one plant much taller than her other two. Mohammed has three healthy (but smaller) plants. Peter and Becky could not grow all three plants from their seeds. Tanya only planted one seed. Tanya has the fewest plants.',
+    'gvlp03b','logical-deduction',3,4,'Who has the tallest plant?',['Mohammed','Tanya','Peter','Jessica'],3,
+    'The passage states Jessica has one plant "much taller than her other two plants" — the tallest plant belongs to Jessica.'
+  ),
+  pq('pass-tomatoes',
+    'Jessica, Peter, Mohammed, Tanya and Becky are each given three seeds. After two months: Jessica has one plant much taller than her other two. Mohammed has three healthy (but smaller) plants. Peter and Becky could not grow all three plants from their seeds. Tanya only planted one seed. Tanya has the fewest plants.',
+    'gvlp03c','logical-deduction',3,4,'How many plants does Tanya have?',['0','1','2','3'],1,
+    'Tanya only planted one seed, so she has at most one plant. Since the passage says she has the fewest, she must have 1 (others have ≥ 2).'
+  ),
 ]
 
-export const verbalQuestions = [...p1, ...p2, ...p3, ...p4, ...glVerbal]
+// ── PASSAGE-BASED QUESTION GROUPS ────────────────────────────────────────────
+
+const CINEMA_PASSAGE = 'A cinema is open every night from 7 pm. The latest time a film begins is 11 pm. Films start at 7:15 pm, 8:15 pm and 9:15 pm on Tuesdays and Thursdays. On Mondays and Wednesdays films start on the hour every hour. At the weekend, films start every half-hour from 7 pm.'
+
+const SISTERS_PASSAGE = 'Susie, Molly, Hannah and Freya are sisters. Every day each girl has either a school lunch or a packed lunch.\n• Susie has school lunches on Mondays, Wednesdays and Fridays; packed lunch on Tuesdays and Thursdays.\n• Molly has school lunches every day except Monday.\n• Hannah has packed lunches on Mondays, Thursdays and Fridays.\n• Freya has school lunches when Hannah does, as well as on Fridays.'
+
+const KITTENS_PASSAGE = 'A cat has 5 kittens. Two are brown and two are grey. All black and grey kittens have green eyes. White kittens have blue eyes.'
+
+const CIPHER1_PASSAGE = 'Three of these four words are given in code. The codes are not in the same order as the words and one code is missing.\n\nWords: ANTS  BASE  LETS  BLUE\nCodes: 5836  4172  8672\n\nUse the codes to work out what each number stands for, then answer the questions.'
+
+const CIPHER2_PASSAGE = 'Three of these four words are given in code. One code is missing.\n\nWords: NAIL  FIND  LATE  FIST\nCodes: 3752  5674  4689\n\n(Hint: the number 7 appears in 2nd position in one code and 3rd position in another. The letter I appears in 2nd position in FIND and 3rd position in NAIL.)'
+
+const CIPHER3_PASSAGE = 'Three of these four words are given in code. One code is missing.\n\nWords: TIME  HEAT  MELT  SAIL\nCodes: 4726  5163  3251\n\n(Hint: the number 6 appears in the codes twice. It is at position 4 in one code and position 3 in another. The letter L appears in position 3 of MELT and position 4 of SAIL.)'
+
+const glPassageGroups = [
+  // Cinema timetable
+  pq('pass-cinema', CINEMA_PASSAGE, 'gvcin01','logical-deduction',2,3,
+    'Which statement MUST be true?',
+    ['No films start at 9:30 pm.','On Tuesday a film starts at 9 pm.','Films start at 9:15 pm three days each week.','A film starts at 9 pm on Monday, Wednesday and at the weekend.'],
+    3,
+    'Mon/Wed: on the hour every hour → 9 pm ✓. Weekend: every half-hour → 9 pm ✓. So 9 pm shows on Mon, Wed, Sat, Sun. Statement D must be true.'
+  ),
+  pq('pass-cinema', CINEMA_PASSAGE, 'gvcin02','logical-deduction',2,3,
+    'On a Saturday, how many showings start between 7 pm and 10 pm (inclusive)?',
+    ['4','5','6','7'],
+    3,
+    'Weekend: every 30 min from 7 pm. Showings: 7:00, 7:30, 8:00, 8:30, 9:00, 9:30, 10:00 = 7 showings.'
+  ),
+  pq('pass-cinema', CINEMA_PASSAGE, 'gvcin03','logical-deduction',2,3,
+    'Which of these start times is ONLY available at the weekend (not on any other night)?',
+    ['8:00 pm','9:15 pm','9:30 pm','7:15 pm'],
+    2,
+    '9:30 pm: Mon/Wed have on-the-hour (9 pm but not 9:30). Tue/Thu only have :15 times. Only weekend has every-half-hour including 9:30 pm.'
+  ),
+
+  // Sisters lunch
+  pq('pass-sisters', SISTERS_PASSAGE, 'gvsist01','logical-deduction',3,4,
+    'Which statement CANNOT be true?',
+    ['Three sisters have school lunches on Fridays.','Only one day has all four sisters having school lunch.','Two sisters have packed lunches on Mondays.','Molly has the most school lunches per week.'],
+    2,
+    'Monday: Susie=school, Molly=packed, Hannah=packed, Freya=packed. That is THREE sisters with packed lunches on Monday — not two. So C cannot be true.'
+  ),
+  pq('pass-sisters', SISTERS_PASSAGE, 'gvsist02','logical-deduction',3,4,
+    'On which day do all four sisters have school lunch?',
+    ['Monday','Tuesday','Wednesday','Thursday'],
+    2,
+    'Wednesday: Susie=school, Molly=school, Hannah=school, Freya=school (Freya has school when Hannah does; Hannah has school on Tue/Wed). All four on Wednesday.'
+  ),
+  pq('pass-sisters', SISTERS_PASSAGE, 'gvsist03','logical-deduction',3,4,
+    'How many school lunches per week does Molly have?',
+    ['3','4','5','2'],
+    1,
+    'Molly has school lunches every day except Monday: Tuesday, Wednesday, Thursday, Friday = 4 school lunches.'
+  ),
+
+  // Kittens
+  pq('pass-kittens', KITTENS_PASSAGE, 'gvkit01','logical-deduction',2,3,
+    'Which statement MUST be true?',
+    ['None of the kittens are black.','None of the kittens have blue eyes.','The grey kittens have blue eyes.','At least 2 of the kittens have green eyes.'],
+    3,
+    'The two grey kittens definitely have green eyes ("all black and grey kittens have green eyes"). So at least 2 have green eyes. This must be true regardless of the 5th kitten\'s colour.'
+  ),
+  pq('pass-kittens', KITTENS_PASSAGE, 'gvkit02','logical-deduction',2,3,
+    'What colour eyes do the grey kittens have?',
+    ['Blue','Brown','Green','We cannot tell'],
+    2,
+    '"All black and grey kittens have green eyes." The grey kittens definitely have green eyes.'
+  ),
+  pq('pass-kittens', KITTENS_PASSAGE, 'gvkit03','logical-deduction',2,3,
+    'The 5th kitten (not brown or grey) is white. How many kittens now have blue eyes?',
+    ['0','1','2','3'],
+    1,
+    '"White kittens have blue eyes." If the 5th kitten is white, exactly 1 kitten (the white one) has blue eyes. The 2 grey ones have green eyes; the 2 brown ones are not mentioned — they may have any colour eyes, but the statements only guarantee green for grey/black and blue for white.'
+  ),
+
+  // Cipher group 1 — ANTS BASE LETS BLUE
+  pq('pass-cipher1', CIPHER1_PASSAGE, 'gvcip01','complex-codes',3,4,
+    'Using the code: ANTS BASE LETS BLUE → codes 5836 4172 8672. What is the code for BASE?',
+    ['5836','4172','5426','8672'],
+    2,
+    'Establish: 8672=LETS (8=L,6=E,7=T,2=S); 5836=BLUE (5=B,3=U,8=L,6=E); 4172=ANTS (4=A,1=N,7=T... wait 7=T? No: from LETS 7=T. ANTS=A-N-T-S → 4=A,1=N,7=T? But T=7 is already set from LETS. Check: 4172 → A-N-T-S but 7=T already and 2=S already. So 4=A,1=N ✓. BASE=B-A-S-E=5-4-2-6=5426. Answer: 5426.'
+  ),
+  pq('pass-cipher1', CIPHER1_PASSAGE, 'gvcip02','complex-codes',3,4,
+    'Using the same code table, what is the code for EAST?',
+    ['4627','6428','6472','6427'],
+    3,
+    'E=6, A=4, S=2, T=7. EAST = 6-4-2-7 = 6427.'
+  ),
+  pq('pass-cipher1', CIPHER1_PASSAGE, 'gvcip03','complex-codes',3,4,
+    'Using the same code table, what word has code 7316?',
+    ['TUBS','TUNE','TUNA','TANS'],
+    1,
+    '7=T, 3=U, 1=N, 6=E. The word is T-U-N-E = TUNE.'
+  ),
+
+  // Cipher group 2 — NAIL FIND LATE FIST
+  pq('pass-cipher2', CIPHER2_PASSAGE, 'gvcip04','complex-codes',3,5,
+    'NAIL FIND LATE FIST with codes 3752 5674 4689. What is the code for FIND?',
+    ['3752','5674','4689','3674'],
+    0,
+    '7=I (appears in 2nd pos in code 3752 matching I in 2nd pos of FIND). 5674=NAIL (5=N,6=A,7=I,4=L). 4689=LATE (4=L,6=A,8=T,9=E). So 3752=FIND (3=F,7=I,5=N,2=D).'
+  ),
+  pq('pass-cipher2', CIPHER2_PASSAGE, 'gvcip05','complex-codes',3,5,
+    'Using the same code table, what word has code 4963?',
+    ['DEAL','LIFE','DEAF','LEAF'],
+    3,
+    '4=L, 9=E, 6=A, 3=F. L-E-A-F = LEAF.'
+  ),
+  pq('pass-cipher2', CIPHER2_PASSAGE, 'gvcip06','complex-codes',3,5,
+    'Using the same code table, what is the code for FLINT?',
+    ['53758','34762','34769','34758'],
+    3,
+    'F=3, L=4, I=7, N=5, T=8. FLINT = 3-4-7-5-8 = 34758.'
+  ),
+
+  // Cipher group 3 — TIME HEAT MELT SAIL
+  pq('pass-cipher3', CIPHER3_PASSAGE, 'gvcip07','complex-codes',4,5,
+    'TIME HEAT MELT SAIL with codes 4726 5163 3251. What is the code for SAIL?',
+    ['4726','5163','3251','4726'],
+    0,
+    '6=L (appears at pos4 in 4726 and pos3 in 5163; L is at pos4 of SAIL and pos3 of MELT). 4726=SAIL (4=S,7=A,2=I,6=L). 5163=MELT (5=M,1=E,6=L,3=T). 3251=TIME (3=T,2=I,5=M,1=E).'
+  ),
+  pq('pass-cipher3', CIPHER3_PASSAGE, 'gvcip08','complex-codes',4,5,
+    'Using the same code table, what word has code 61743?',
+    ['MEATS','LEAKS','LEAST','LASTS'],
+    2,
+    '6=L, 1=E, 7=A, 4=S, 3=T. L-E-A-S-T = LEAST.'
+  ),
+  pq('pass-cipher3', CIPHER3_PASSAGE, 'gvcip09','complex-codes',4,5,
+    'Using the same code table, what is the code for STEAM?',
+    ['41725','43875','34875','43175'],
+    3,
+    'S=4, T=3, E=1, A=7, M=5. STEAM = 4-3-1-7-5 = 43175.'
+  ),
+]
+
+export const verbalQuestions = [...p1, ...p2, ...p3, ...p4, ...glVerbal, ...glPassageGroups]
